@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/enxg/skyticket/internal/router"
+	"github.com/enxg/skyticket/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
@@ -9,7 +10,9 @@ import (
 func main() {
 	app := fiber.New()
 
-	router.SetupRoutes(app, router.Controllers{})
+	app := fiber.New(fiber.Config{
+		StructValidator: validator.NewStructValidator(),
+	})
 
 	err := app.Listen(":3000")
 	if err != nil {
