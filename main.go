@@ -1,1 +1,5 @@
-package skyticket
+package main
+
+func main() {
+
+}

@@ -1,4 +1,4 @@
-module skyticket
+module github.com/enxg/skyticket
 
 go 1.25
 
