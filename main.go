@@ -5,10 +5,24 @@ import (
 	"github.com/enxg/skyticket/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 func main() {
 	app := fiber.New()
+	uri := os.Getenv("MONGODB_URI")
+	if uri == "" {
+		log.Fatal().Msg("MONGODB_URI environment variable not set")
+	}
+
+	client, err := mongo.Connect(options.Client().ApplyURI(uri))
+	if err != nil {
+		log.Fatal().Err(err).Msg("error connecting to MongoDB")
+	}
+
+	db := client.Database("skyticket")
+
 
 	app := fiber.New(fiber.Config{
 		StructValidator: validator.NewStructValidator(),
