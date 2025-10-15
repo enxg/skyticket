@@ -10,9 +10,9 @@ const (
 )
 
 type Ticket struct {
-	ID         primitive.ObjectID `json:"id"`
-	EventID    primitive.ObjectID `json:"event_id"`
-	SeatNumber string             `json:"seat_number"`
-	Price      float64            `json:"price"`
-	Status     TicketStatus       `json:"status"`
+	ID         primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	EventID    primitive.ObjectID `json:"event_id,omitempty" bson:"event_id,omitempty"`
+	SeatNumber string             `json:"seat_number,omitempty" bson:"seat_number,omitempty"`
+	Price      float64            `json:"price,omitempty" bson:"price,omitempty"`
+	Status     TicketStatus       `json:"status,omitempty" bson:"status,omitempty"`
 }
