@@ -7,3 +7,7 @@ endif
 run:
 	@go mod tidy
 	@go run .
+
+.PHONY: docs
+docs:
+	@go tool swag init
