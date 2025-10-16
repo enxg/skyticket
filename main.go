@@ -20,6 +20,13 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
+// @title			SkyTicket
+// @version		1.0
+// @description	This is the API documentation for SkyTicket.
+// @license.name	MIT
+// @license.url	https://github.com/enxg/skyticket/blob/main/LICENSE
+// @schemes		https
+// @host			skyticket.enesgenc.dev
 func main() {
 	uri := os.Getenv("MONGODB_URI")
 	if uri == "" {

@@ -26,6 +26,18 @@ func NewEventController(eventService services.EventService) EventController {
 	}
 }
 
+// CreateEvent godoc
+//
+//	@Summary		Create a new event
+//	@Description	Create a new event with the provided details
+//	@Tags			Events
+//	@Accept			json
+//	@Produce		json
+//	@Param			event	body		requests.CreateEventRequest	true	"Event details"
+//	@Success		201		{object}	models.Event
+//	@Failure		400		{object}	responses.ValidationErrorResponse
+//	@Failure		500		{object}	responses.ErrorResponse
+//	@Router			/events [post]
 func (s *eventController) CreateEvent(c fiber.Ctx) error {
 	var data requests.CreateEventRequest
 
@@ -47,6 +59,19 @@ func (s *eventController) CreateEvent(c fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(resp)
 }
 
+// GetEventByID godoc
+//
+//	@Summary		Get event by ID
+//	@Description	Get details of an event by its ID
+//	@Tags			Events
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"Event ID"
+//	@Success		200	{object}	models.Event
+//	@Failure		400	{object}	responses.ValidationErrorResponse
+//	@Failure		404	{object}	responses.ErrorResponse
+//	@Failure		500	{object}	responses.ErrorResponse
+//	@Router			/events/{id} [get]
 func (s *eventController) GetEventByID(c fiber.Ctx) error {
 	id := c.Params("id")
 	resp, err := s.eventService.GetEventByID(c.Context(), id)
@@ -57,6 +82,16 @@ func (s *eventController) GetEventByID(c fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
+// GetAllEvents godoc
+//
+//	@Summary		Get all events
+//	@Description	Retrieve a list of all events with their details
+//	@Tags			Events
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}		models.Event
+//	@Failure		500	{object}	responses.ErrorResponse
+//	@Router			/events [get]
 func (s *eventController) GetAllEvents(c fiber.Ctx) error {
 	resp, err := s.eventService.GetAllEvents(c.Context())
 	if err != nil {
@@ -66,6 +101,20 @@ func (s *eventController) GetAllEvents(c fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
+// UpdateEvent godoc
+//
+//	@Summary		Update an existing event
+//	@Description	Update the details of an existing event by its ID
+//	@Tags			Events
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string						true	"Event ID"
+//	@Param			event	body		requests.UpdateEventRequest	true	"Updated event details"
+//	@Success		200		{object}	models.Event
+//	@Failure		400		{object}	responses.ValidationErrorResponse
+//	@Failure		404		{object}	responses.ErrorResponse
+//	@Failure		500		{object}	responses.ErrorResponse
+//	@Router			/events/{id} [patch]
 func (s *eventController) UpdateEvent(c fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -88,6 +137,18 @@ func (s *eventController) UpdateEvent(c fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
+// DeleteEvent godoc
+//
+//	@Summary		Delete an event
+//	@Description	Delete an event by its ID
+//	@Tags			Events
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"Event ID"
+//	@Success		204	{object}	nil
+//	@Failure		404	{object}	responses.ErrorResponse
+//	@Failure		500	{object}	responses.ErrorResponse
+//	@Router			/events/{id} [delete]
 func (s *eventController) DeleteEvent(c fiber.Ctx) error {
 	id := c.Params("id")
 	err := s.eventService.DeleteEvent(c.Context(), id)

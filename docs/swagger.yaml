@@ -1,0 +1,226 @@
+definitions:
+  models.Event:
+    properties:
+      date:
+        example: "2025-09-14T21:00:00+03:00"
+        type: string
+      id:
+        example: 68f0c6a8f5673dc0ec646731
+        type: string
+      name:
+        example: FIBA EuroBasket 2025 Finali
+        type: string
+      venue:
+        example: YTÜ Davutpaşa Tarihi Hamam
+        type: string
+    type: object
+  requests.CreateEventRequest:
+    properties:
+      date:
+        example: "2025-09-14T21:00:00+03:00"
+        type: string
+      name:
+        example: FIBA EuroBasket 2025 Finali
+        type: string
+      venue:
+        example: YTÜ Davutpaşa Tarihi Hamam
+        type: string
+    required:
+    - date
+    - name
+    - venue
+    type: object
+  requests.UpdateEventRequest:
+    properties:
+      date:
+        example: "2025-09-14T21:00:00+03:00"
+        type: string
+      name:
+        example: FIBA EuroBasket 2025 Finali
+        type: string
+      venue:
+        example: YTÜ Davutpaşa Tarihi Hamam
+        type: string
+    type: object
+  responses.ErrorResponse:
+    properties:
+      message:
+        example: Error message
+        type: string
+    type: object
+  responses.ValidationErrorResponse:
+    properties:
+      errors:
+        items:
+          $ref: '#/definitions/validator.ValidationError'
+        type: array
+    type: object
+  validator.ValidationError:
+    properties:
+      error:
+        example: Error message for the field
+        type: string
+      field:
+        example: field_name
+        type: string
+    type: object
+host: skyticket.enesgenc.dev
+info:
+  contact: {}
+  description: This is the API documentation for SkyTicket.
+  license:
+    name: MIT
+    url: https://github.com/enxg/skyticket/blob/main/LICENSE
+  title: SkyTicket
+  version: "1.0"
+paths:
+  /events:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all events with their details
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Event'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Get all events
+      tags:
+      - Events
+    post:
+      consumes:
+      - application/json
+      description: Create a new event with the provided details
+      parameters:
+      - description: Event details
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CreateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Event'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ValidationErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Create a new event
+      tags:
+      - Events
+  /events/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an event by its ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Delete an event
+      tags:
+      - Events
+    get:
+      consumes:
+      - application/json
+      description: Get details of an event by its ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Event'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Get event by ID
+      tags:
+      - Events
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of an existing event by its ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated event details
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Event'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Update an existing event
+      tags:
+      - Events
+schemes:
+- https
+swagger: "2.0"
