@@ -6,7 +6,7 @@ import (
 
 	"github.com/enxg/skyticket/internal/models"
 	"github.com/enxg/skyticket/internal/repositories"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type EventService interface {
@@ -41,7 +41,7 @@ func (e *eventService) CreateEvent(ctx context.Context, name string, date time.T
 }
 
 func (e *eventService) GetEventByID(ctx context.Context, id string) (models.Event, error) {
-	oid, err := primitive.ObjectIDFromHex(id)
+	oid, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return models.Event{}, err
 	}
@@ -54,7 +54,7 @@ func (e *eventService) GetAllEvents(ctx context.Context) ([]models.Event, error)
 }
 
 func (e *eventService) UpdateEvent(ctx context.Context, id string, name string, date time.Time, venue string) (models.Event, error) {
-	oid, err := primitive.ObjectIDFromHex(id)
+	oid, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return models.Event{}, err
 	}
@@ -68,7 +68,7 @@ func (e *eventService) UpdateEvent(ctx context.Context, id string, name string, 
 }
 
 func (e *eventService) DeleteEvent(ctx context.Context, id string) error {
-	oid, err := primitive.ObjectIDFromHex(id)
+	oid, err := bson.ObjectIDFromHex(id)
 	if err != nil {
 		return err
 	}
