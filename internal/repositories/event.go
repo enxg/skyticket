@@ -47,7 +47,8 @@ func (e *eventRepository) GetByID(ctx context.Context, id bson.ObjectID) (models
 }
 
 func (e *eventRepository) GetAll(ctx context.Context) ([]models.Event, error) {
-	var events []models.Event
+	events := make([]models.Event, 0)
+
 	cursor, err := e.collection.Find(ctx, bson.D{})
 	if err != nil {
 		return nil, err
