@@ -29,7 +29,7 @@ func NewEventController(eventService services.EventService) EventController {
 func (s *eventController) CreateEvent(c fiber.Ctx) error {
 	var data requests.CreateEventRequest
 
-	err := c.Bind().Body(data)
+	err := c.Bind().Body(&data)
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (s *eventController) UpdateEvent(c fiber.Ctx) error {
 	id := c.Params("id")
 
 	var data requests.UpdateEventRequest
-	err := c.Bind().Body(data)
+	err := c.Bind().Body(&data)
 	if err != nil {
 		return err
 	}
