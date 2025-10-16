@@ -1,11 +1,14 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"os"
 
 	"github.com/bytedance/sonic"
 	"github.com/enxg/skyticket/internal/controllers"
 	"github.com/enxg/skyticket/internal/repositories"
+	"github.com/enxg/skyticket/internal/responses"
 	"github.com/enxg/skyticket/internal/router"
 	"github.com/enxg/skyticket/internal/services"
 	"github.com/enxg/skyticket/pkg/validator"
@@ -36,6 +39,7 @@ func main() {
 		StructValidator: validator.NewStructValidator(),
 		JSONEncoder:     sonic.Marshal,
 		JSONDecoder:     sonic.Unmarshal,
+		ErrorHandler:    errorHandler,
 	})
 
 	router.SetupRoutes(app, router.Controllers{
@@ -46,4 +50,29 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("error starting server")
 	}
+}
+
+func errorHandler(ctx fiber.Ctx, err error) error {
+	var validationErrors validator.ValidationErrors
+	if errors.As(err, &validationErrors) {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responses.ValidationErrorResponse{
+				Errors: validator.ParseValidationErrors(validationErrors),
+			})
+	}
+
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return ctx.Status(fiber.StatusNotFound).JSON(responses.ErrorResponse{
+			Message: "Resource not found",
+		})
+	}
+
+	log.Error().
+		Str("path", ctx.Path()).
+		Str("type", fmt.Sprintf("%T", err)).
+		Err(err).
+		Send()
+	return ctx.Status(fiber.StatusInternalServerError).JSON(responses.ErrorResponse{
+		Message: "Internal server error",
+	})
 }
