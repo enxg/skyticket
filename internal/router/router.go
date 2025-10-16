@@ -1,8 +1,10 @@
 package router
 
 import (
+	"github.com/enxg/skyticket/docs"
 	"github.com/enxg/skyticket/internal/controllers"
 	"github.com/gofiber/fiber/v3"
+	"github.com/yokeTH/gofiber-scalar/scalar/v3"
 )
 
 type Controllers struct {
@@ -17,4 +19,10 @@ func SetupRoutes(app *fiber.App, c Controllers) {
 		Patch("/:id", c.EventController.UpdateEvent).
 		Delete("/:id", c.EventController.DeleteEvent)
 
+	app.Group("/docs").
+		Use(scalar.New(scalar.Config{
+			FileContentString: docs.SwaggerInfo.ReadDoc(),
+			Path:              "",
+			Title:             "SkyTicket API Documentation",
+		}))
 }
