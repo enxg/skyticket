@@ -10,7 +10,7 @@ import (
 
 type EventRepository interface {
 	Create(ctx context.Context, event models.Event) (models.Event, error)
-	GetByID(ctx context.Context, id bson.ObjectID) (models.Event, error)
+	FindOneByID(ctx context.Context, id bson.ObjectID) (models.Event, error)
 	Find(ctx context.Context, filter models.Event) ([]models.Event, error)
 	Update(ctx context.Context, event models.Event) (models.Event, error)
 	Delete(ctx context.Context, id bson.ObjectID) error
@@ -36,7 +36,7 @@ func (e *eventRepository) Create(ctx context.Context, event models.Event) (model
 	return event, nil
 }
 
-func (e *eventRepository) GetByID(ctx context.Context, id bson.ObjectID) (models.Event, error) {
+func (e *eventRepository) FindOneByID(ctx context.Context, id bson.ObjectID) (models.Event, error) {
 	var result models.Event
 	err := e.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&result)
 	if err != nil {
