@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/bytedance/sonic"
+	"github.com/enxg/skyticket/docs"
 	"github.com/enxg/skyticket/internal/controllers"
 	"github.com/enxg/skyticket/internal/repositories"
 	"github.com/enxg/skyticket/internal/responses"
@@ -28,6 +29,14 @@ import (
 // @schemes		https
 // @host			skyticket.enesgenc.dev
 func main() {
+	if sch := os.Getenv("OPENAPI_SCHEME"); sch != "" {
+		docs.SwaggerInfo.Schemes = []string{sch}
+	}
+
+	if host := os.Getenv("OPENAPI_HOST"); host != "" {
+		docs.SwaggerInfo.Host = host
+	}
+
 	uri := os.Getenv("MONGODB_URI")
 	if uri == "" {
 		log.Fatal().Msg("MONGODB_URI environment variable not set")
