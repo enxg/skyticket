@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/bytedance/sonic"
 	"github.com/enxg/skyticket/internal/controllers"
 	"github.com/enxg/skyticket/internal/repositories"
 	"github.com/enxg/skyticket/internal/router"
@@ -33,6 +34,8 @@ func main() {
 
 	app := fiber.New(fiber.Config{
 		StructValidator: validator.NewStructValidator(),
+		JSONEncoder:     sonic.Marshal,
+		JSONDecoder:     sonic.Unmarshal,
 	})
 
 	router.SetupRoutes(app, router.Controllers{
