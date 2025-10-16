@@ -10,4 +10,5 @@ run:
 
 .PHONY: docs
 docs:
+	@go tool swag fmt
 	@go tool swag init
