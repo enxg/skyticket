@@ -50,7 +50,7 @@ func (e *eventService) GetEventByID(ctx context.Context, id string) (models.Even
 }
 
 func (e *eventService) GetAllEvents(ctx context.Context) ([]models.Event, error) {
-	return e.eventRepository.GetAll(ctx)
+	return e.eventRepository.Find(ctx, models.Event{})
 }
 
 func (e *eventService) UpdateEvent(ctx context.Context, id string, name string, date time.Time, venue string) (models.Event, error) {

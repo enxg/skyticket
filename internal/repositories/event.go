@@ -11,7 +11,7 @@ import (
 type EventRepository interface {
 	Create(ctx context.Context, event models.Event) (models.Event, error)
 	GetByID(ctx context.Context, id bson.ObjectID) (models.Event, error)
-	GetAll(ctx context.Context) ([]models.Event, error)
+	Find(ctx context.Context, filter models.Event) ([]models.Event, error)
 	Update(ctx context.Context, event models.Event) (models.Event, error)
 	Delete(ctx context.Context, id bson.ObjectID) error
 }
@@ -46,10 +46,10 @@ func (e *eventRepository) GetByID(ctx context.Context, id bson.ObjectID) (models
 	return result, nil
 }
 
-func (e *eventRepository) GetAll(ctx context.Context) ([]models.Event, error) {
+func (e *eventRepository) Find(ctx context.Context, filter models.Event) ([]models.Event, error) {
 	events := make([]models.Event, 0)
 
-	cursor, err := e.collection.Find(ctx, bson.D{})
+	cursor, err := e.collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
