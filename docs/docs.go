@@ -167,7 +167,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "204": {
-                        "description": "No Content"
+                        "description": "Deleted"
                     },
                     "404": {
                         "description": "Not Found",

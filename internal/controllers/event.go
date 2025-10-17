@@ -145,7 +145,7 @@ func (s *eventController) UpdateEvent(c fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		string	true	"Event ID"
-//	@Success		204	{object}	nil
+//	@Success		204	{object}	nil		"Deleted"
 //	@Failure		404	{object}	responses.ErrorResponse
 //	@Failure		500	{object}	responses.ErrorResponse
 //	@Router			/events/{id} [delete]
