@@ -61,8 +61,8 @@ func (e *eventRepository) Find(ctx context.Context, filter models.Event) ([]mode
 }
 
 func (e *eventRepository) Update(ctx context.Context, event models.Event) (models.Event, error) {
-	filter := bson.D{{"_id", event.ID}}
-	update := bson.D{{"$set", event}}
+	filter := bson.M{"_id": event.ID}
+	update := bson.M{"$set": event}
 
 	res, err := e.collection.UpdateOne(ctx, filter, update)
 	if err != nil {
@@ -77,6 +77,8 @@ func (e *eventRepository) Update(ctx context.Context, event models.Event) (model
 }
 
 func (e *eventRepository) Delete(ctx context.Context, id bson.ObjectID) error {
+	// TODO: delete tickets associated with this event
+
 	res, err := e.collection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return err
