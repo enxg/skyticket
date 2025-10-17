@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/rs/zerolog/log"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type StructValidator interface {
@@ -34,6 +36,11 @@ func NewStructValidator() StructValidator {
 		return name
 	})
 
+	err := vld.RegisterValidation("objectid", validateObjectID)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to register custom validation for object ID")
+	}
+
 	return &structValidator{
 		validate: vld,
 	}
@@ -41,6 +48,15 @@ func NewStructValidator() StructValidator {
 
 func (v *structValidator) Validate(out any) error {
 	return v.validate.Struct(out)
+}
+
+func validateObjectID(fl validator.FieldLevel) bool {
+	_, err := bson.ObjectIDFromHex(fl.Field().String())
+	if err != nil {
+		return false
+	}
+
+	return true
 }
 
 func ParseValidationErrors(validationErrors validator.ValidationErrors) []ValidationError {
