@@ -8,16 +8,24 @@ import (
 )
 
 type Controllers struct {
-	EventController controllers.EventController
+	EventController  controllers.EventController
+	TicketController controllers.TicketController
 }
 
 func SetupRoutes(app *fiber.App, c Controllers) {
 	app.Group("/events").
-		Post("", c.EventController.CreateEvent).
+		Post("/", c.EventController.CreateEvent).
 		Get("/:id", c.EventController.GetEventByID).
-		Get("", c.EventController.GetAllEvents).
+		Get("/", c.EventController.GetAllEvents).
 		Patch("/:id", c.EventController.UpdateEvent).
 		Delete("/:id", c.EventController.DeleteEvent)
+
+	app.Group("/events/:eventId/tickets").
+		Post("/", c.TicketController.CreateTicket).
+		Get("/:id", c.TicketController.GetTicketByID).
+		Get("/", c.TicketController.GetAllTickets).
+		Patch("/:id", c.TicketController.UpdateTicket).
+		Delete("/:id", c.TicketController.DeleteTicket)
 
 	app.Group("/docs").
 		Use(scalar.New(scalar.Config{
