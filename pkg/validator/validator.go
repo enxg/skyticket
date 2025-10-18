@@ -77,6 +77,8 @@ func validationErrorToText(e validator.FieldError) string {
 		return fmt.Sprintf("%s is required.", e.Field())
 	case "datetime":
 		return fmt.Sprintf("%s must be in RFC3339 format.", e.Field())
+	case "gt":
+		return fmt.Sprintf("%s must be greater than %s.", e.Field(), e.Param())
 	default:
 		return fmt.Sprintf("%s is invalid.", e.Field())
 	}
