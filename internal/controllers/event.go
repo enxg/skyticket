@@ -40,7 +40,6 @@ func NewEventController(eventService services.EventService) EventController {
 //	@Router			/events [post]
 func (s *eventController) CreateEvent(c fiber.Ctx) error {
 	var data requests.CreateEventRequest
-
 	err := c.Bind().Body(&data)
 	if err != nil {
 		return err
