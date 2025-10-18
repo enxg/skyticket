@@ -140,6 +140,9 @@ func (t *ticketController) UpdateTicket(c fiber.Ctx) error {
 
 	var data requests.UpdateTicketRequest
 	err := c.Bind().Body(&data)
+	if err != nil {
+		return err
+	}
 
 	resp, err := t.ticketService.UpdateTicket(c.Context(), ticketId, eventId, data.SeatNumber, data.Price)
 	if err != nil {
