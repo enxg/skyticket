@@ -13,7 +13,7 @@ type TicketRepository interface {
 	FindOne(ctx context.Context, filter models.Ticket) (models.Ticket, error)
 	Find(ctx context.Context, filter models.Ticket) ([]models.Ticket, error)
 	Update(ctx context.Context, ticket models.Ticket) (models.Ticket, error)
-	Delete(ctx context.Context, id bson.ObjectID) error
+	Delete(ctx context.Context, filter models.Ticket) error
 }
 
 type ticketRepository struct {
@@ -79,8 +79,8 @@ func (t *ticketRepository) Update(ctx context.Context, ticket models.Ticket) (mo
 	return ticket, nil
 }
 
-func (t *ticketRepository) Delete(ctx context.Context, id bson.ObjectID) error {
-	res, err := t.collection.DeleteOne(ctx, bson.M{"_id": id})
+func (t *ticketRepository) Delete(ctx context.Context, filter models.Ticket) error {
+	res, err := t.collection.DeleteOne(ctx, filter)
 	if err != nil {
 		return err
 	}
