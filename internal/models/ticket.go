@@ -17,4 +17,5 @@ type Ticket struct {
 	SeatNumber string        `json:"seat_number,omitempty" bson:"seat_number,omitempty"`
 	Price      float64       `json:"price,omitempty" bson:"price,omitempty"`
 	Status     TicketStatus  `json:"status,omitempty" bson:"status,omitempty"`
+	Price      int           `json:"price,omitempty" bson:"price,omitempty" example:"4999"`
 }
