@@ -15,19 +15,32 @@ import (
 	"github.com/enxg/skyticket/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
 	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
-// @title			SkyTicket
-// @version		1.0
-// @description	This is the API documentation for SkyTicket.
+//	@title			SkyTicket
+//	@version		1.0
+//	@description	This is the API documentation for SkyTicket.
+
+//	@tag.Name			Events
+//	@tag.Description	APIs related to event management in SkyTicket.
+
+//	@tag.name			Tickets
+//	@tag.description	SkyTicket expects monetary values to be represented in the smallest currency units ("kuruş" for Turkish lira) to avoid floating-point precision issues.
+
+//	@contact.name	Enes Genç
+//	@contact.url	https://enesgenc.dev
+//	@contact.email	hello@enesgenc.dev
+
+//	@schemes	https
+//	@host		skyticket.enesgenc.dev
+
 // @license.name	MIT
 // @license.url	https://github.com/enxg/skyticket/blob/main/LICENSE
-// @schemes		https
-// @host			skyticket.enesgenc.dev
 func main() {
 	if sch := os.Getenv("OPENAPI_SCHEME"); sch != "" {
 		docs.SwaggerInfo.Schemes = []string{sch}
@@ -50,8 +63,13 @@ func main() {
 	db := client.Database("skyticket")
 
 	eventRepository := repositories.NewEventRepository(db)
+	ticketRepository := repositories.NewTicketRepository(db)
+
 	eventService := services.NewEventService(eventRepository)
+	ticketService := services.NewTicketService(ticketRepository, eventRepository)
+
 	eventController := controllers.NewEventController(eventService)
+	ticketController := controllers.NewTicketController(ticketService)
 
 	app := fiber.New(fiber.Config{
 		StructValidator: validator.NewStructValidator(),
@@ -63,7 +81,8 @@ func main() {
 	app.Use(cors.New())
 
 	router.SetupRoutes(app, router.Controllers{
-		EventController: eventController,
+		EventController:  eventController,
+		TicketController: ticketController,
 	})
 
 	err = app.Listen(":3000")
@@ -81,7 +100,7 @@ func errorHandler(ctx fiber.Ctx, err error) error {
 			})
 	}
 
-	if errors.Is(err, mongo.ErrNoDocuments) {
+	if errors.Is(err, mongo.ErrNoDocuments) || errors.Is(err, bson.ErrInvalidHex) {
 		return ctx.Status(fiber.StatusNotFound).JSON(responses.ErrorResponse{
 			Message: "Resource not found",
 		})
