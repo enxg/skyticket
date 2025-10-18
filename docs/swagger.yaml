@@ -14,6 +14,38 @@ definitions:
         example: YTÜ Davutpaşa Tarihi Hamam
         type: string
     type: object
+  models.Ticket:
+    properties:
+      event_id:
+        example: 68f0c6a8f5673dc0ec646731
+        type: string
+        x-order: "1"
+      id:
+        example: 68f2ab0516a352dc8f40c543
+        type: string
+        x-order: "0"
+      price:
+        example: 4999
+        type: integer
+        x-order: "3"
+      seat_number:
+        example: A12
+        type: string
+        x-order: "2"
+      status:
+        allOf:
+        - $ref: '#/definitions/models.TicketStatus'
+        example: AVAILABLE
+        x-order: "4"
+    type: object
+  models.TicketStatus:
+    enum:
+    - AVAILABLE
+    - RESERVED
+    type: string
+    x-enum-varnames:
+    - TicketStatusAvailable
+    - TicketStatusReserved
   requests.CreateEventRequest:
     properties:
       date:
@@ -30,6 +62,18 @@ definitions:
     - name
     - venue
     type: object
+  requests.CreateTicketRequest:
+    properties:
+      price:
+        example: 4999
+        type: integer
+      seat_number:
+        example: A12
+        type: string
+    required:
+    - price
+    - seat_number
+    type: object
   requests.UpdateEventRequest:
     properties:
       date:
@@ -41,6 +85,18 @@ definitions:
       venue:
         example: YTÜ Davutpaşa Tarihi Hamam
         type: string
+    type: object
+  requests.UpdateTicketRequest:
+    properties:
+      price:
+        example: 4999
+        type: integer
+      seat_number:
+        example: A12
+        type: string
+    required:
+    - price
+    - seat_number
     type: object
   responses.ErrorResponse:
     properties:
@@ -66,7 +122,10 @@ definitions:
     type: object
 host: skyticket.enesgenc.dev
 info:
-  contact: {}
+  contact:
+    email: hello@enesgenc.dev
+    name: Enes Genç
+    url: https://enesgenc.dev
   description: This is the API documentation for SkyTicket.
   license:
     name: MIT
@@ -124,6 +183,187 @@ paths:
       summary: Create a new event
       tags:
       - Events
+  /events/{eventId}/tickets:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all tickets for an event with their details
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Ticket'
+            type: array
+        "404":
+          description: Event not found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Get all tickets for an event
+      tags:
+      - Tickets
+    post:
+      consumes:
+      - application/json
+      description: Create a ticket with the provided details
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      - description: Ticket details
+        in: body
+        name: ticket
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CreateTicketRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Ticket'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ValidationErrorResponse'
+        "404":
+          description: Event not found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "409":
+          description: Seat number is already taken
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Create a ticket
+      tags:
+      - Tickets
+  /events/{eventId}/tickets/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a ticket by its ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      - description: Ticket ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Ticket not found for the given event
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Delete a ticket
+      tags:
+      - Tickets
+    get:
+      consumes:
+      - application/json
+      description: Get details of a ticket by its ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      - description: Ticket ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Ticket'
+        "404":
+          description: Ticket not found for the given event
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Get ticket by ID
+      tags:
+      - Tickets
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of an existing ticket by its ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      - description: Ticket ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated ticket details
+        in: body
+        name: ticket
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateTicketRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Ticket'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ValidationErrorResponse'
+        "404":
+          description: Ticket not found for the given event
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Update an existing ticket
+      tags:
+      - Tickets
   /events/{id}:
     delete:
       consumes:
@@ -224,3 +464,9 @@ paths:
 schemes:
 - https
 swagger: "2.0"
+tags:
+- description: APIs related to event management in SkyTicket.
+  name: Events
+- description: SkyTicket expects monetary values to be represented in the smallest
+    currency units ("kuruş" for Turkish lira) to avoid floating-point precision issues.
+  name: Tickets
