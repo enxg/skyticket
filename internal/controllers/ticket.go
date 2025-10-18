@@ -54,7 +54,7 @@ func (t *ticketController) CreateTicket(c fiber.Ctx) error {
 	resp, err := t.ticketService.CreateTicket(c.Context(), eventId, data.SeatNumber, data.Price)
 	if err != nil {
 		if errors.Is(err, services.ErrEventNotFound) {
-			return c.Status(fiber.StatusBadRequest).JSON(responses.ErrorResponse{
+			return c.Status(fiber.StatusNotFound).JSON(responses.ErrorResponse{
 				Message: "Event not found",
 			})
 		}
