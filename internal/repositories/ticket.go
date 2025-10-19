@@ -82,7 +82,9 @@ func (t *ticketRepository) Update(ctx context.Context, ticket models.Ticket) (mo
 		return models.Ticket{}, mongo.ErrNoDocuments
 	}
 
-	return ticket, nil
+	return t.FindOne(ctx, models.Ticket{
+		ID: ticket.ID,
+	})
 }
 
 func (t *ticketRepository) Delete(ctx context.Context, filter models.Ticket) error {

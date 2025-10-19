@@ -73,7 +73,7 @@ func (e *eventRepository) Update(ctx context.Context, event models.Event) (model
 		return models.Event{}, mongo.ErrNoDocuments
 	}
 
-	return event, nil
+	return e.FindOneByID(ctx, event.ID)
 }
 
 func (e *eventRepository) Delete(ctx context.Context, id bson.ObjectID) error {
