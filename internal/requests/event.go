@@ -7,7 +7,7 @@ type CreateEventRequest struct {
 }
 
 type UpdateEventRequest struct {
-	Name  string `json:"name" validate:"lt=256" example:"FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025"`
-	Date  string `json:"date" validate:"datetime=2006-01-02T15:04:05Z07:00" example:"2025-12-07T16:00:00+03:00"`
-	Venue string `json:"venue" validate:"lt=256" example:"YTÜ Davutpaşa Tarihi Hamam"`
+	Name  string `json:"name,omitempty" validate:"omitempty,lt=256" example:"FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025"`
+	Date  string `json:"date,omitempty" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00" example:"2025-12-07T16:00:00+03:00"`
+	Venue string `json:"venue,omitempty" validate:"omitempty,lt=256" example:"YTÜ Davutpaşa Tarihi Hamam"`
 }
