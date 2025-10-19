@@ -1,0 +1,7 @@
+services:
+  skyticket:
+    image: ghcr.io/enxg/skyticket:latest
+    env_file:
+      - .env
+    ports:
+        - "3000:3000"
