@@ -28,7 +28,6 @@ type reservationService struct {
 var (
 	ErrTicketNotFound        = errors.New("ticket not found")
 	ErrTicketAlreadyReserved = errors.New("ticket already reserved")
-	ErrEventAlreadyPassed    = errors.New("event date has already passed")
 )
 
 func NewReservationService(reservationRepository repositories.ReservationRepository, ticketRepository repositories.TicketRepository, eventRepository repositories.EventRepository, mongoClient *mongo.Client) ReservationService {
