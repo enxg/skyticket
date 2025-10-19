@@ -8,6 +8,10 @@ run:
 	@go mod tidy
 	@go run .
 
+.PHONY: build-prod
+build-prod:
+	@CGO_ENABLED=0 GOOS=linux go build -o skyticket ./main.go
+
 .PHONY: docs
 docs:
 	@go tool swag fmt
