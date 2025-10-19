@@ -137,8 +137,27 @@ func (r *reservationService) CancelReservation(ctx context.Context, eventID stri
 		return err
 	}
 
-	return r.reservationRepository.Delete(ctx, models.Reservation{
-		TicketID: ticketOid,
-		EventID:  eventOid,
+	tx, err := r.mongoClient.StartSession()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.WithTransaction(ctx, func(txCtx context.Context) (any, error) {
+		err := r.reservationRepository.Delete(txCtx, models.Reservation{
+			TicketID: ticketOid,
+			EventID:  eventOid,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = r.ticketRepository.Update(txCtx, models.Ticket{
+			ID:      ticketOid,
+			EventID: eventOid,
+			Status:  models.TicketStatusAvailable,
+		})
+		return nil, err
 	})
+
+	return err
 }
