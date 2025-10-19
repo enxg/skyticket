@@ -171,7 +171,7 @@ func (t *ticketService) DeleteTicket(ctx context.Context, ticketID string, event
 			return nil, err
 		}
 
-		return nil, t.reservationRepository.Delete(txCtx, models.Reservation{
+		return nil, t.reservationRepository.DeleteMany(txCtx, models.Reservation{
 			TicketID: oid,
 		})
 	})
