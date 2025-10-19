@@ -100,6 +100,14 @@ func (t *ticketService) GetTicketsByEvent(ctx context.Context, eventID string) (
 		return nil, err
 	}
 
+	_, err = t.eventRepository.FindOneByID(ctx, eventOid)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, ErrEventNotFound
+		}
+		return nil, err
+	}
+
 	return t.ticketRepository.Find(ctx, models.Ticket{
 		EventID: eventOid,
 	})

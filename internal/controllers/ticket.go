@@ -119,6 +119,12 @@ func (t *ticketController) GetAllTickets(c fiber.Ctx) error {
 
 	resp, err := t.ticketService.GetTicketsByEvent(c.Context(), eventId)
 	if err != nil {
+		if errors.Is(err, services.ErrEventNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(responses.ErrorResponse{
+				Message: "Event not found",
+			})
+		}
+
 		return err
 	}
 
