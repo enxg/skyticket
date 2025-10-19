@@ -130,12 +130,15 @@ func (s *eventController) UpdateEvent(c fiber.Ctx) error {
 		return err
 	}
 
-	date, err := time.Parse(time.RFC3339, data.Date)
-	if err != nil {
-		return err
+	var date time.Time
+	if data.Date != "" {
+		date, err = time.Parse(time.RFC3339, data.Date)
+		if err != nil {
+			return err
+		}
 	}
 
-	if time.Now().After(date) {
+	if !date.IsZero() && time.Now().After(date) {
 		return c.Status(fiber.StatusBadRequest).JSON(responses.ErrorResponse{
 			Message: "Event date cannot be in the past",
 		})
