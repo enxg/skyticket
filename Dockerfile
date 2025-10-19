@@ -6,6 +6,7 @@ RUN apk add --no-cache make
 COPY go.mod go.sum ./
 RUN go mod download
 
+COPY Makefile ./
 COPY main.go ./
 COPY internal/ ./internal/
 COPY pkg/ ./pkg/
