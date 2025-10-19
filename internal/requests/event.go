@@ -1,13 +1,13 @@
 package requests
 
 type CreateEventRequest struct {
-	Name  string `json:"name" validate:"required,lt=256" example:"FIBA EuroBasket 2025 Finali"`
-	Date  string `json:"date" validate:"required,datetime=2006-01-02T15:04:05Z07:00" example:"2025-09-14T21:00:00+03:00"`
+	Name  string `json:"name" validate:"required,lt=256" example:"FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025"`
+	Date  string `json:"date" validate:"required,datetime=2006-01-02T15:04:05Z07:00" example:"2025-12-07T16:00:00+03:00"`
 	Venue string `json:"venue" validate:"required,lt=256" example:"YTÜ Davutpaşa Tarihi Hamam"`
 }
 
 type UpdateEventRequest struct {
-	Name  string `json:"name" validate:"lt=256" example:"FIBA EuroBasket 2025 Finali"`
-	Date  string `json:"date" validate:"datetime=2006-01-02T15:04:05Z07:00" example:"2025-09-14T21:00:00+03:00"`
+	Name  string `json:"name" validate:"lt=256" example:"FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025"`
+	Date  string `json:"date" validate:"datetime=2006-01-02T15:04:05Z07:00" example:"2025-12-07T16:00:00+03:00"`
 	Venue string `json:"venue" validate:"lt=256" example:"YTÜ Davutpaşa Tarihi Hamam"`
 }
