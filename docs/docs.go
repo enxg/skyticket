@@ -754,7 +754,7 @@ const docTemplate = `{
             "properties": {
                 "date": {
                     "type": "string",
-                    "example": "2025-09-14T21:00:00+03:00"
+                    "example": "2025-12-07T19:00:00Z"
                 },
                 "id": {
                     "type": "string",
@@ -762,7 +762,7 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "example": "FIBA EuroBasket 2025 Finali"
+                    "example": "FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025"
                 },
                 "venue": {
                     "type": "string",
@@ -774,19 +774,32 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "customer_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Lewis Hamilton"
+                },
+                "event_id": {
+                    "type": "string",
+                    "example": "68f0c6a8f5673dc0ec646731"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "68f4fea9990e605d6589b5f3"
                 },
                 "reservation_date": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2025-10-1T15:00:00Z"
                 },
                 "status": {
-                    "$ref": "#/definitions/models.ReservationStatus"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.ReservationStatus"
+                        }
+                    ],
+                    "example": "ACTIVE"
                 },
                 "ticket_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "68f2ab0516a352dc8f40c543"
                 }
             }
         },
@@ -856,11 +869,11 @@ const docTemplate = `{
             "properties": {
                 "date": {
                     "type": "string",
-                    "example": "2025-09-14T21:00:00+03:00"
+                    "example": "2025-12-07T16:00:00+03:00"
                 },
                 "name": {
                     "type": "string",
-                    "example": "FIBA EuroBasket 2025 Finali"
+                    "example": "FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025"
                 },
                 "venue": {
                     "type": "string",
@@ -902,11 +915,11 @@ const docTemplate = `{
             "properties": {
                 "date": {
                     "type": "string",
-                    "example": "2025-09-14T21:00:00+03:00"
+                    "example": "2025-12-07T16:00:00+03:00"
                 },
                 "name": {
                     "type": "string",
-                    "example": "FIBA EuroBasket 2025 Finali"
+                    "example": "FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025"
                 },
                 "venue": {
                     "type": "string",
@@ -925,10 +938,6 @@ const docTemplate = `{
         },
         "requests.UpdateTicketRequest": {
             "type": "object",
-            "required": [
-                "price",
-                "seat_number"
-            ],
             "properties": {
                 "price": {
                     "type": "integer",

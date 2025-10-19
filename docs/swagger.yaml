@@ -2,13 +2,13 @@ definitions:
   models.Event:
     properties:
       date:
-        example: "2025-09-14T21:00:00+03:00"
+        example: "2025-12-07T19:00:00Z"
         type: string
       id:
         example: 68f0c6a8f5673dc0ec646731
         type: string
       name:
-        example: FIBA EuroBasket 2025 Finali
+        example: FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025
         type: string
       venue:
         example: YTÜ Davutpaşa Tarihi Hamam
@@ -17,14 +17,23 @@ definitions:
   models.Reservation:
     properties:
       customer_name:
+        example: Lewis Hamilton
+        type: string
+      event_id:
+        example: 68f0c6a8f5673dc0ec646731
         type: string
       id:
+        example: 68f4fea9990e605d6589b5f3
         type: string
       reservation_date:
+        example: "2025-10-1T15:00:00Z"
         type: string
       status:
-        $ref: '#/definitions/models.ReservationStatus'
+        allOf:
+        - $ref: '#/definitions/models.ReservationStatus'
+        example: ACTIVE
       ticket_id:
+        example: 68f2ab0516a352dc8f40c543
         type: string
     type: object
   models.ReservationStatus:
@@ -70,10 +79,10 @@ definitions:
   requests.CreateEventRequest:
     properties:
       date:
-        example: "2025-09-14T21:00:00+03:00"
+        example: "2025-12-07T16:00:00+03:00"
         type: string
       name:
-        example: FIBA EuroBasket 2025 Finali
+        example: FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025
         type: string
       venue:
         example: YTÜ Davutpaşa Tarihi Hamam
@@ -106,10 +115,10 @@ definitions:
   requests.UpdateEventRequest:
     properties:
       date:
-        example: "2025-09-14T21:00:00+03:00"
+        example: "2025-12-07T16:00:00+03:00"
         type: string
       name:
-        example: FIBA EuroBasket 2025 Finali
+        example: FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025
         type: string
       venue:
         example: YTÜ Davutpaşa Tarihi Hamam
@@ -129,9 +138,6 @@ definitions:
       seat_number:
         example: A12
         type: string
-    required:
-    - price
-    - seat_number
     type: object
   responses.ErrorResponse:
     properties:
