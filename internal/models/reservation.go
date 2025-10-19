@@ -9,8 +9,8 @@ import (
 type ReservationStatus string
 
 const (
-	ReservationStatusActive    ReservationStatus = "active"
-	ReservationStatusCancelled ReservationStatus = "cancelled"
+	ReservationStatusActive    ReservationStatus = "ACTIVE"
+	ReservationStatusCancelled ReservationStatus = "CANCELLED"
 )
 
 type Reservation struct {
