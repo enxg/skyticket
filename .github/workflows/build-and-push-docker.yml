@@ -5,10 +5,14 @@ on:
         - main
     workflow_dispatch: {}
 jobs:
-    build-and-push:
+    build:
       strategy:
         matrix:
-          os: [ubuntu-latest, ubuntu-24.04-arm]
+          include:
+            - arch: amd64
+              os: ubuntu-latest
+            - arch: arm64
+              os: ubuntu-24.04-arm
       runs-on: ${{ matrix.os }}
       steps:
         - name: Login to GitHub Container Registry
@@ -28,5 +32,21 @@ jobs:
           uses: docker/build-push-action@v6
           with:
             push: true
-            tags: ghcr.io/enxg/skyticket:latest
-            platforms: ${{ runner.arch == 'X64' && 'linux/amd64' || runner.arch == 'ARM64' && 'linux/arm64' }}
+            tags: ghcr.io/enxg/skyticket:${{ matrix.arch }}
+            platforms: linux/${{ matrix.arch }}
+    publish:
+      needs: build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Login to GitHub Container Registry
+          uses: docker/login-action@v3
+          with:
+            registry: ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+        - name: Create and push manifest list
+          run: |
+            docker manifest create ghcr.io/enxg/skyticket:latest \
+              --amend ghcr.io/enxg/skyticket:amd64 \
+              --amend ghcr.io/enxg/skyticket:arm64
+            docker manifest push ghcr.io/enxg/skyticket:latest
