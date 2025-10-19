@@ -127,12 +127,21 @@ func errorHandler(ctx fiber.Ctx, err error) error {
 		})
 	}
 
+	code := fiber.StatusInternalServerError
+	message := "Internal server error"
+
+	var e *fiber.Error
+	if errors.As(err, &e) {
+		code = e.Code
+		message = e.Message
+	}
+
 	log.Error().
 		Str("path", ctx.Path()).
 		Str("type", fmt.Sprintf("%T", err)).
 		Err(err).
 		Send()
-	return ctx.Status(fiber.StatusInternalServerError).JSON(responses.ErrorResponse{
-		Message: "Internal server error",
+	return ctx.Status(code).JSON(responses.ErrorResponse{
+		Message: message,
 	})
 }
