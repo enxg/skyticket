@@ -124,6 +124,20 @@ func (t *ticketService) UpdateTicket(ctx context.Context, ticketID string, event
 		return models.Ticket{}, err
 	}
 
+	if seatNumber != "" {
+		searchSeat, err := t.ticketRepository.FindOne(ctx, models.Ticket{
+			EventID:    eventOid,
+			SeatNumber: seatNumber,
+		})
+		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+			return models.Ticket{}, err
+		}
+
+		if searchSeat.ID != oid && searchSeat.SeatNumber == seatNumber {
+			return models.Ticket{}, ErrSeatNumberTaken
+		}
+	}
+
 	return t.ticketRepository.Update(ctx, models.Ticket{
 		ID:         oid,
 		EventID:    eventOid,

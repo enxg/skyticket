@@ -158,6 +158,12 @@ func (t *ticketController) UpdateTicket(c fiber.Ctx) error {
 
 	resp, err := t.ticketService.UpdateTicket(c.Context(), ticketId, eventId, data.SeatNumber, data.Price)
 	if err != nil {
+		if errors.Is(err, services.ErrSeatNumberTaken) {
+			return c.Status(fiber.StatusConflict).JSON(responses.ErrorResponse{
+				Message: "Seat number is already taken",
+			})
+		}
+
 		return err
 	}
 
