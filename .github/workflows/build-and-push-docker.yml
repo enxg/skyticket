@@ -9,7 +9,7 @@ jobs:
       strategy:
         matrix:
           os: [ubuntu-latest, ubuntu-24.04-arm]
-      runs-on: ubuntu-latest
+      runs-on: ${{ matrix.os }}
       steps:
         - name: Login to GitHub Container Registry
           uses: docker/login-action@v3
