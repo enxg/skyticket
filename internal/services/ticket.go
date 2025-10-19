@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/enxg/skyticket/internal/models"
 	"github.com/enxg/skyticket/internal/repositories"
@@ -47,6 +48,10 @@ func (t *ticketService) CreateTicket(ctx context.Context, eventID string, seatNu
 			return models.Ticket{}, ErrEventNotFound
 		}
 		return models.Ticket{}, err
+	}
+
+	if time.Now().After(event.Date) {
+		return models.Ticket{}, ErrEventAlreadyPassed
 	}
 
 	existingTickets, err := t.ticketRepository.Find(ctx, models.Ticket{
