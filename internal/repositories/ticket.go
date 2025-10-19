@@ -14,10 +14,16 @@ type TicketRepository interface {
 	Find(ctx context.Context, filter models.Ticket) ([]models.Ticket, error)
 	Update(ctx context.Context, ticket models.Ticket) (models.Ticket, error)
 	Delete(ctx context.Context, filter models.Ticket) error
+	AttemptToReserve(ctx context.Context, eventID bson.ObjectID, ticketID bson.ObjectID) (TicketReservationAttemptResult, error)
 }
 
 type ticketRepository struct {
 	collection mongo.Collection
+}
+
+type TicketReservationAttemptResult struct {
+	TicketFound bool
+	Reserved    bool
 }
 
 func NewTicketRepository(db *mongo.Database) TicketRepository {
@@ -90,4 +96,34 @@ func (t *ticketRepository) Delete(ctx context.Context, filter models.Ticket) err
 	}
 
 	return nil
+}
+
+func (t *ticketRepository) AttemptToReserve(ctx context.Context, eventID bson.ObjectID, ticketID bson.ObjectID) (TicketReservationAttemptResult, error) {
+	filter := bson.M{
+		"_id":      ticketID,
+		"event_id": eventID,
+	}
+	update := []bson.M{
+		{
+			"$set": bson.M{
+				"status": bson.M{
+					"$cond": bson.M{
+						"if":   bson.M{"$eq": bson.A{"$status", models.TicketStatusAvailable}},
+						"then": models.TicketStatusReserved,
+						"else": "$status",
+					},
+				},
+			},
+		},
+	}
+
+	res, err := t.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return TicketReservationAttemptResult{}, err
+	}
+
+	return TicketReservationAttemptResult{
+		TicketFound: res.MatchedCount > 0,
+		Reserved:    res.ModifiedCount > 0,
+	}, nil
 }
