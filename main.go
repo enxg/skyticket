@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 
-	"github.com/bytedance/sonic"
 	"github.com/enxg/skyticket/docs"
 	"github.com/enxg/skyticket/internal/controllers"
 	"github.com/enxg/skyticket/internal/repositories"
@@ -79,8 +79,6 @@ func main() {
 
 	app := fiber.New(fiber.Config{
 		StructValidator: validator.NewStructValidator(),
-		JSONEncoder:     sonic.Marshal,
-		JSONDecoder:     sonic.Unmarshal,
 		ErrorHandler:    errorHandler,
 	})
 
@@ -110,6 +108,22 @@ func errorHandler(ctx fiber.Ctx, err error) error {
 	if errors.Is(err, mongo.ErrNoDocuments) || errors.Is(err, bson.ErrInvalidHex) {
 		return ctx.Status(fiber.StatusNotFound).JSON(responses.ErrorResponse{
 			Message: "Resource not found",
+		})
+	}
+
+	var jte *json.UnmarshalTypeError
+	if errors.As(err, &jte) {
+		return ctx.Status(fiber.StatusBadRequest).JSON(responses.ValidationErrorResponse{
+			Errors: []validator.ValidationError{
+				{Field: jte.Field, Error: "invalid type provided, expected " + jte.Type.String() + "."},
+			},
+		})
+	}
+
+	var jse *json.SyntaxError
+	if errors.As(err, &jse) {
+		return ctx.Status(fiber.StatusBadRequest).JSON(responses.ErrorResponse{
+			Message: "Malformed JSON at offset " + fmt.Sprint(jse.Offset) + ".",
 		})
 	}
 
