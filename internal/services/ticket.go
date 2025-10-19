@@ -20,8 +20,10 @@ type TicketService interface {
 }
 
 type ticketService struct {
-	ticketRepository repositories.TicketRepository
-	eventRepository  repositories.EventRepository
+	ticketRepository      repositories.TicketRepository
+	eventRepository       repositories.EventRepository
+	reservationRepository repositories.ReservationRepository
+	mongoClient           *mongo.Client
 }
 
 var (
@@ -29,10 +31,12 @@ var (
 	ErrSeatNumberTaken = errors.New("seat number is already taken")
 )
 
-func NewTicketService(ticketRepository repositories.TicketRepository, eventRepository repositories.EventRepository) TicketService {
+func NewTicketService(ticketRepository repositories.TicketRepository, eventRepository repositories.EventRepository, reservationRepository repositories.ReservationRepository, mongoClient *mongo.Client) TicketService {
 	return &ticketService{
-		ticketRepository: ticketRepository,
-		eventRepository:  eventRepository,
+		ticketRepository:      ticketRepository,
+		eventRepository:       eventRepository,
+		reservationRepository: reservationRepository,
+		mongoClient:           mongoClient,
 	}
 }
 
@@ -131,8 +135,24 @@ func (t *ticketService) DeleteTicket(ctx context.Context, ticketID string, event
 		return err
 	}
 
-	return t.ticketRepository.Delete(ctx, models.Ticket{
-		ID:      oid,
-		EventID: eventOid,
+	tx, err := t.mongoClient.StartSession()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.WithTransaction(ctx, func(txCtx context.Context) (any, error) {
+		err := t.ticketRepository.Delete(txCtx, models.Ticket{
+			ID:      oid,
+			EventID: eventOid,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, t.reservationRepository.Delete(txCtx, models.Reservation{
+			TicketID: oid,
+		})
 	})
+
+	return err
 }
