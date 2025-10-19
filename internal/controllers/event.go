@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/enxg/skyticket/internal/requests"
+	"github.com/enxg/skyticket/internal/responses"
 	"github.com/enxg/skyticket/internal/services"
 	"github.com/gofiber/fiber/v3"
 )
@@ -48,6 +49,12 @@ func (s *eventController) CreateEvent(c fiber.Ctx) error {
 	date, err := time.Parse(time.RFC3339, data.Date)
 	if err != nil {
 		return err
+	}
+
+	if time.Now().After(date) {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.ErrorResponse{
+			Message: "Event date cannot be in the past",
+		})
 	}
 
 	resp, err := s.eventService.CreateEvent(c.Context(), data.Name, date, data.Venue)
@@ -126,6 +133,12 @@ func (s *eventController) UpdateEvent(c fiber.Ctx) error {
 	date, err := time.Parse(time.RFC3339, data.Date)
 	if err != nil {
 		return err
+	}
+
+	if time.Now().After(date) {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.ErrorResponse{
+			Message: "Event date cannot be in the past",
+		})
 	}
 
 	resp, err := s.eventService.UpdateEvent(c.Context(), id, data.Name, date, data.Venue)
