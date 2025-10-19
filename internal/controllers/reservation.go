@@ -67,7 +67,7 @@ func (r *reservationController) CreateReservation(c fiber.Ctx) error {
 		}
 
 		if errors.Is(err, services.ErrEventAlreadyPassed) {
-			return c.Status(fiber.StatusConflict).JSON(responses.ErrorResponse{
+			return c.Status(fiber.StatusBadRequest).JSON(responses.ErrorResponse{
 				Message: "Event date has already passed",
 			})
 		}
