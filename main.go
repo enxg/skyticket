@@ -30,7 +30,10 @@ import (
 //	@tag.Description	APIs related to event management in SkyTicket.
 
 //	@tag.name			Tickets
-//	@tag.description	SkyTicket expects monetary values to be represented in the smallest currency units ("kuruş" for Turkish lira) to avoid floating-point precision issues.
+//	@tag.description	APIs related to ticket management in SkyTicket. SkyTicket expects monetary values to be represented in the smallest currency units ("kuruş" for Turkish lira) to avoid floating-point precision issues.
+
+//	@tag.name			Reservations
+//	@tag.description	APIs related to ticket reservations in SkyTicket.
 
 //	@contact.name	Enes Genç
 //	@contact.url	https://enesgenc.dev
