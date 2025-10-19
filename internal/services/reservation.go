@@ -81,6 +81,7 @@ func (r *reservationService) CreateReservation(ctx context.Context, eventID stri
 
 		return r.reservationRepository.Create(txCtx, models.Reservation{
 			TicketID:        ticketOid,
+			EventID:         event.ID,
 			CustomerName:    customerName,
 			Status:          models.ReservationStatusActive,
 			ReservationDate: ti,
@@ -101,16 +102,9 @@ func (r *reservationService) GetReservation(ctx context.Context, eventID string,
 		return models.Reservation{}, err
 	}
 
-	ticket, err := r.ticketRepository.FindOne(ctx, models.Ticket{
-		ID:      ticketOid,
-		EventID: eventOid,
-	})
-	if err != nil {
-		return models.Reservation{}, err
-	}
-
 	return r.reservationRepository.FindOne(ctx, models.Reservation{
-		TicketID: ticket.ID,
+		TicketID: ticketOid,
+		EventID:  eventOid,
 	})
 }
 
@@ -125,16 +119,9 @@ func (r *reservationService) UpdateReservation(ctx context.Context, eventID stri
 		return models.Reservation{}, err
 	}
 
-	ticket, err := r.ticketRepository.FindOne(ctx, models.Ticket{
-		ID:      ticketOid,
-		EventID: eventOid,
-	})
-	if err != nil {
-		return models.Reservation{}, err
-	}
-
 	return r.reservationRepository.Update(ctx, models.Reservation{
-		TicketID:     ticket.ID,
+		TicketID:     ticketOid,
+		EventID:      eventOid,
 		CustomerName: customerName,
 	})
 }
@@ -150,15 +137,8 @@ func (r *reservationService) CancelReservation(ctx context.Context, eventID stri
 		return err
 	}
 
-	ticket, err := r.ticketRepository.FindOne(ctx, models.Ticket{
-		ID:      ticketOid,
-		EventID: eventOid,
-	})
-	if err != nil {
-		return err
-	}
-
 	return r.reservationRepository.Delete(ctx, models.Reservation{
-		TicketID: ticket.ID,
+		TicketID: ticketOid,
+		EventID:  eventOid,
 	})
 }

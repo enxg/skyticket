@@ -49,6 +49,7 @@ func (r *reservationRepository) FindOne(ctx context.Context, filter models.Reser
 func (r *reservationRepository) Update(ctx context.Context, reservation models.Reservation) (models.Reservation, error) {
 	filter := bson.M{
 		"ticket_id": reservation.TicketID,
+		"event_id":  reservation.EventID,
 	}
 	update := bson.M{"$set": reservation}
 
