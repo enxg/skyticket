@@ -14,6 +14,7 @@ type TicketRepository interface {
 	Find(ctx context.Context, filter models.Ticket) ([]models.Ticket, error)
 	Update(ctx context.Context, ticket models.Ticket) (models.Ticket, error)
 	Delete(ctx context.Context, filter models.Ticket) error
+	DeleteMany(ctx context.Context, filter models.Ticket) error
 	AttemptToReserve(ctx context.Context, eventID bson.ObjectID, ticketID bson.ObjectID) (TicketReservationAttemptResult, error)
 }
 
@@ -98,6 +99,11 @@ func (t *ticketRepository) Delete(ctx context.Context, filter models.Ticket) err
 	}
 
 	return nil
+}
+
+func (t *ticketRepository) DeleteMany(ctx context.Context, filter models.Ticket) error {
+	_, err := t.collection.DeleteMany(ctx, filter)
+	return err
 }
 
 func (t *ticketRepository) AttemptToReserve(ctx context.Context, eventID bson.ObjectID, ticketID bson.ObjectID) (TicketReservationAttemptResult, error) {

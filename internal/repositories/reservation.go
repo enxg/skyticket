@@ -13,6 +13,7 @@ type ReservationRepository interface {
 	FindOne(ctx context.Context, filter models.Reservation) (models.Reservation, error)
 	Update(ctx context.Context, reservation models.Reservation) (models.Reservation, error)
 	Delete(ctx context.Context, filter models.Reservation) error
+	DeleteMany(ctx context.Context, filter models.Reservation) error
 }
 
 type reservationRepository struct {
@@ -76,4 +77,9 @@ func (r *reservationRepository) Delete(ctx context.Context, filter models.Reserv
 	}
 
 	return nil
+}
+
+func (r *reservationRepository) DeleteMany(ctx context.Context, filter models.Reservation) error {
+	_, err := r.collection.DeleteMany(ctx, filter)
+	return err
 }
