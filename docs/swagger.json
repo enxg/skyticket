@@ -366,6 +366,237 @@
                 }
             }
         },
+        "/events/{eventId}/tickets/{ticketId}/reservation": {
+            "get": {
+                "description": "Get reservation details for a ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Get reservation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Event ID",
+                        "name": "eventId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Ticket ID",
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Reservation"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a reservation for a ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Create a reservation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Event ID",
+                        "name": "eventId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Ticket ID",
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Reservation details",
+                        "name": "reservation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.CreateReservationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Reservation"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Ticket/event not found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Ticket is already reserved / Event date has already passed",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Cancel and delete an existing reservation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Cancel a reservation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Event ID",
+                        "name": "eventId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Ticket ID",
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update details of an existing reservation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reservations"
+                ],
+                "summary": "Update a reservation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Event ID",
+                        "name": "eventId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Ticket ID",
+                        "name": "ticketId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated reservation details",
+                        "name": "reservation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.UpdateReservationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Reservation"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ValidationErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/events/{id}": {
             "get": {
                 "description": "Get details of an event by its ID",
@@ -535,6 +766,37 @@
                 }
             }
         },
+        "models.Reservation": {
+            "type": "object",
+            "properties": {
+                "customer_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "reservation_date": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/models.ReservationStatus"
+                },
+                "ticket_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ReservationStatus": {
+            "type": "string",
+            "enum": [
+                "ACTIVE",
+                "CANCELLED"
+            ],
+            "x-enum-varnames": [
+                "ReservationStatusActive",
+                "ReservationStatusCancelled"
+            ]
+        },
         "models.Ticket": {
             "type": "object",
             "properties": {
@@ -602,6 +864,18 @@
                 }
             }
         },
+        "requests.CreateReservationRequest": {
+            "type": "object",
+            "required": [
+                "customer_name"
+            ],
+            "properties": {
+                "customer_name": {
+                    "type": "string",
+                    "example": "Enes Genç"
+                }
+            }
+        },
         "requests.CreateTicketRequest": {
             "type": "object",
             "required": [
@@ -633,6 +907,15 @@
                 "venue": {
                     "type": "string",
                     "example": "YTÜ Davutpaşa Tarihi Hamam"
+                }
+            }
+        },
+        "requests.UpdateReservationRequest": {
+            "type": "object",
+            "properties": {
+                "customer_name": {
+                    "type": "string",
+                    "example": "Enes Genç"
                 }
             }
         },
@@ -693,8 +976,12 @@
             "name": "Events"
         },
         {
-            "description": "SkyTicket expects monetary values to be represented in the smallest currency units (\"kuruş\" for Turkish lira) to avoid floating-point precision issues.",
+            "description": "APIs related to ticket management in SkyTicket. SkyTicket expects monetary values to be represented in the smallest currency units (\"kuruş\" for Turkish lira) to avoid floating-point precision issues.",
             "name": "Tickets"
+        },
+        {
+            "description": "APIs related to ticket reservations in SkyTicket.",
+            "name": "Reservations"
         }
     ]
 }

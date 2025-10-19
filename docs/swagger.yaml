@@ -14,6 +14,27 @@ definitions:
         example: YTÜ Davutpaşa Tarihi Hamam
         type: string
     type: object
+  models.Reservation:
+    properties:
+      customer_name:
+        type: string
+      id:
+        type: string
+      reservation_date:
+        type: string
+      status:
+        $ref: '#/definitions/models.ReservationStatus'
+      ticket_id:
+        type: string
+    type: object
+  models.ReservationStatus:
+    enum:
+    - ACTIVE
+    - CANCELLED
+    type: string
+    x-enum-varnames:
+    - ReservationStatusActive
+    - ReservationStatusCancelled
   models.Ticket:
     properties:
       event_id:
@@ -62,6 +83,14 @@ definitions:
     - name
     - venue
     type: object
+  requests.CreateReservationRequest:
+    properties:
+      customer_name:
+        example: Enes Genç
+        type: string
+    required:
+    - customer_name
+    type: object
   requests.CreateTicketRequest:
     properties:
       price:
@@ -84,6 +113,12 @@ definitions:
         type: string
       venue:
         example: YTÜ Davutpaşa Tarihi Hamam
+        type: string
+    type: object
+  requests.UpdateReservationRequest:
+    properties:
+      customer_name:
+        example: Enes Genç
         type: string
     type: object
   requests.UpdateTicketRequest:
@@ -364,6 +399,161 @@ paths:
       summary: Update an existing ticket
       tags:
       - Tickets
+  /events/{eventId}/tickets/{ticketId}/reservation:
+    delete:
+      consumes:
+      - application/json
+      description: Cancel and delete an existing reservation
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      - description: Ticket ID
+        in: path
+        name: ticketId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Cancel a reservation
+      tags:
+      - Reservations
+    get:
+      consumes:
+      - application/json
+      description: Get reservation details for a ticket
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      - description: Ticket ID
+        in: path
+        name: ticketId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Reservation'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Get reservation
+      tags:
+      - Reservations
+    patch:
+      consumes:
+      - application/json
+      description: Update details of an existing reservation
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      - description: Ticket ID
+        in: path
+        name: ticketId
+        required: true
+        type: string
+      - description: Updated reservation details
+        in: body
+        name: reservation
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateReservationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Reservation'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ValidationErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Update a reservation
+      tags:
+      - Reservations
+    post:
+      consumes:
+      - application/json
+      description: Create a reservation for a ticket
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      - description: Ticket ID
+        in: path
+        name: ticketId
+        required: true
+        type: string
+      - description: Reservation details
+        in: body
+        name: reservation
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CreateReservationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Reservation'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ValidationErrorResponse'
+        "404":
+          description: Ticket/event not found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "409":
+          description: Ticket is already reserved / Event date has already passed
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Create a reservation
+      tags:
+      - Reservations
   /events/{id}:
     delete:
       consumes:
@@ -467,6 +657,9 @@ swagger: "2.0"
 tags:
 - description: APIs related to event management in SkyTicket.
   name: Events
-- description: SkyTicket expects monetary values to be represented in the smallest
-    currency units ("kuruş" for Turkish lira) to avoid floating-point precision issues.
+- description: APIs related to ticket management in SkyTicket. SkyTicket expects monetary
+    values to be represented in the smallest currency units ("kuruş" for Turkish lira)
+    to avoid floating-point precision issues.
   name: Tickets
+- description: APIs related to ticket reservations in SkyTicket.
+  name: Reservations
