@@ -69,7 +69,7 @@ func main() {
 	ticketRepository := repositories.NewTicketRepository(db)
 	reservationRepository := repositories.NewReservationRepository(db)
 
-	eventService := services.NewEventService(eventRepository)
+	eventService := services.NewEventService(eventRepository, ticketRepository, reservationRepository, client)
 	ticketService := services.NewTicketService(ticketRepository, eventRepository, reservationRepository, client)
 	reservationService := services.NewReservationService(reservationRepository, ticketRepository, eventRepository, client)
 

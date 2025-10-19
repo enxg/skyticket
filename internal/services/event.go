@@ -7,6 +7,7 @@ import (
 	"github.com/enxg/skyticket/internal/models"
 	"github.com/enxg/skyticket/internal/repositories"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type EventService interface {
@@ -18,12 +19,18 @@ type EventService interface {
 }
 
 type eventService struct {
-	eventRepository repositories.EventRepository
+	eventRepository       repositories.EventRepository
+	ticketRepository      repositories.TicketRepository
+	reservationRepository repositories.ReservationRepository
+	mongoClient           *mongo.Client
 }
 
-func NewEventService(eventRepository repositories.EventRepository) EventService {
+func NewEventService(eventRepository repositories.EventRepository, ticketRepository repositories.TicketRepository, reservationRepository repositories.ReservationRepository, mongoClient *mongo.Client) EventService {
 	return &eventService{
-		eventRepository: eventRepository,
+		eventRepository:       eventRepository,
+		ticketRepository:      ticketRepository,
+		reservationRepository: reservationRepository,
+		mongoClient:           mongoClient,
 	}
 }
 
@@ -73,5 +80,28 @@ func (e *eventService) DeleteEvent(ctx context.Context, id string) error {
 		return err
 	}
 
-	return e.eventRepository.Delete(ctx, oid)
+	tx, err := e.mongoClient.StartSession()
+	if err != nil {
+		return err
+	}
+	_, err = tx.WithTransaction(ctx, func(txCtx context.Context) (any, error) {
+		err := e.reservationRepository.DeleteMany(txCtx, models.Reservation{
+			EventID: oid,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		err = e.ticketRepository.DeleteMany(txCtx, models.Ticket{
+			EventID: oid,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		err = e.eventRepository.Delete(ctx, oid)
+		return nil, err
+	})
+
+	return err
 }
