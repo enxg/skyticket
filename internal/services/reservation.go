@@ -119,6 +119,15 @@ func (r *reservationService) UpdateReservation(ctx context.Context, eventID stri
 		return models.Reservation{}, err
 	}
 
+	event, err := r.eventRepository.FindOneByID(ctx, eventOid)
+	if err != nil {
+		return models.Reservation{}, err
+	}
+
+	if event.Date.Before(time.Now()) {
+		return models.Reservation{}, ErrEventAlreadyPassed
+	}
+
 	return r.reservationRepository.Update(ctx, models.Reservation{
 		TicketID:     ticketOid,
 		EventID:      eventOid,
@@ -135,6 +144,15 @@ func (r *reservationService) CancelReservation(ctx context.Context, eventID stri
 	ticketOid, err := bson.ObjectIDFromHex(ticketID)
 	if err != nil {
 		return err
+	}
+
+	event, err := r.eventRepository.FindOneByID(ctx, eventOid)
+	if err != nil {
+		return err
+	}
+
+	if event.Date.Before(time.Now()) {
+		return ErrEventAlreadyPassed
 	}
 
 	tx, err := r.mongoClient.StartSession()

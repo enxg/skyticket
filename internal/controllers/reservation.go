@@ -130,6 +130,12 @@ func (r *reservationController) UpdateReservation(c fiber.Ctx) error {
 
 	resp, err := r.reservationService.UpdateReservation(c.Context(), eventID, ticketID, data.CustomerName)
 	if err != nil {
+		if errors.Is(err, services.ErrEventAlreadyPassed) {
+			return c.Status(fiber.StatusBadRequest).JSON(responses.ErrorResponse{
+				Message: "Event date has already passed",
+			})
+		}
+
 		return err
 	}
 
@@ -155,6 +161,12 @@ func (r *reservationController) DeleteReservation(c fiber.Ctx) error {
 
 	err := r.reservationService.CancelReservation(c.Context(), eventID, ticketID)
 	if err != nil {
+		if errors.Is(err, services.ErrEventAlreadyPassed) {
+			return c.Status(fiber.StatusBadRequest).JSON(responses.ErrorResponse{
+				Message: "Event date has already passed",
+			})
+		}
+
 		return err
 	}
 
