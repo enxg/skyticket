@@ -64,12 +64,15 @@ func main() {
 
 	eventRepository := repositories.NewEventRepository(db)
 	ticketRepository := repositories.NewTicketRepository(db)
+	reservationRepository := repositories.NewReservationRepository(db)
 
 	eventService := services.NewEventService(eventRepository)
 	ticketService := services.NewTicketService(ticketRepository, eventRepository)
+	reservationService := services.NewReservationService(reservationRepository, ticketRepository, eventRepository, client)
 
 	eventController := controllers.NewEventController(eventService)
 	ticketController := controllers.NewTicketController(ticketService)
+	reservationController := controllers.NewReservationController(reservationService)
 
 	app := fiber.New(fiber.Config{
 		StructValidator: validator.NewStructValidator(),
@@ -81,8 +84,9 @@ func main() {
 	app.Use(cors.New())
 
 	router.SetupRoutes(app, router.Controllers{
-		EventController:  eventController,
-		TicketController: ticketController,
+		EventController:       eventController,
+		TicketController:      ticketController,
+		ReservationController: reservationController,
 	})
 
 	err = app.Listen(":3000")
