@@ -77,8 +77,6 @@ func (e *eventRepository) Update(ctx context.Context, event models.Event) (model
 }
 
 func (e *eventRepository) Delete(ctx context.Context, id bson.ObjectID) error {
-	// TODO: delete tickets associated with this event
-
 	res, err := e.collection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return err
