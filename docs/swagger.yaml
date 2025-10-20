@@ -4,37 +4,47 @@ definitions:
       date:
         example: "2025-12-07T19:00:00Z"
         type: string
+        x-order: "2"
       id:
         example: 68f0c6a8f5673dc0ec646731
         type: string
+        x-order: "0"
       name:
         example: FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025
         type: string
+        x-order: "1"
       venue:
         example: YTÜ Davutpaşa Tarihi Hamam
         type: string
+        x-order: "3"
     type: object
   models.Reservation:
     properties:
       customer_name:
         example: Lewis Hamilton
         type: string
+        x-order: "3"
       event_id:
         example: 68f0c6a8f5673dc0ec646731
         type: string
+        x-order: "1"
       id:
         example: 68f4fea9990e605d6589b5f3
         type: string
+        x-order: "0"
       reservation_date:
         example: "2025-10-1T15:00:00Z"
         type: string
+        x-order: "4"
       status:
         allOf:
         - $ref: '#/definitions/models.ReservationStatus'
         example: ACTIVE
+        x-order: "5"
       ticket_id:
         example: 68f2ab0516a352dc8f40c543
         type: string
+        x-order: "2"
     type: object
   models.ReservationStatus:
     enum:

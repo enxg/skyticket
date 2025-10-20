@@ -752,20 +752,24 @@ const docTemplate = `{
         "models.Event": {
             "type": "object",
             "properties": {
-                "date": {
-                    "type": "string",
-                    "example": "2025-12-07T19:00:00Z"
-                },
                 "id": {
                     "type": "string",
+                    "x-order": "0",
                     "example": "68f0c6a8f5673dc0ec646731"
                 },
                 "name": {
                     "type": "string",
+                    "x-order": "1",
                     "example": "FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2025"
+                },
+                "date": {
+                    "type": "string",
+                    "x-order": "2",
+                    "example": "2025-12-07T19:00:00Z"
                 },
                 "venue": {
                     "type": "string",
+                    "x-order": "3",
                     "example": "YTÜ Davutpaşa Tarihi Hamam"
                 }
             }
@@ -773,20 +777,29 @@ const docTemplate = `{
         "models.Reservation": {
             "type": "object",
             "properties": {
-                "customer_name": {
+                "id": {
                     "type": "string",
-                    "example": "Lewis Hamilton"
+                    "x-order": "0",
+                    "example": "68f4fea9990e605d6589b5f3"
                 },
                 "event_id": {
                     "type": "string",
+                    "x-order": "1",
                     "example": "68f0c6a8f5673dc0ec646731"
                 },
-                "id": {
+                "ticket_id": {
                     "type": "string",
-                    "example": "68f4fea9990e605d6589b5f3"
+                    "x-order": "2",
+                    "example": "68f2ab0516a352dc8f40c543"
+                },
+                "customer_name": {
+                    "type": "string",
+                    "x-order": "3",
+                    "example": "Lewis Hamilton"
                 },
                 "reservation_date": {
                     "type": "string",
+                    "x-order": "4",
                     "example": "2025-10-1T15:00:00Z"
                 },
                 "status": {
@@ -795,11 +808,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/models.ReservationStatus"
                         }
                     ],
+                    "x-order": "5",
                     "example": "ACTIVE"
-                },
-                "ticket_id": {
-                    "type": "string",
-                    "example": "68f2ab0516a352dc8f40c543"
                 }
             }
         },
