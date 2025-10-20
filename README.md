@@ -1,4 +1,4 @@
-# Skyticket
+# SkyTicket
 My submission for the YTU SKY LAB WEBLAB R&D Team Acceptance Task.
 
 ---
